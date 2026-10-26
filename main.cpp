@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-#include <string>
 
 // Состояние игры (базовые переменные)
 int hp = 100;
@@ -17,7 +16,46 @@ void printHUD() {
 }
 
 // -------------------------------------------------------------
-// [МЕСТО ДЛЯ ФУНКЦИЙ РАЗРАБОТЧИКОВ ИЗ PULL REQUEST'ОВ]
+bool riskOperation() {
+  // проверка ресурсов
+    if (resources <= 0) {
+    std::cout << "\nНедостаточно ресурсов для All-In!\n";
+    return false;
+  }
+  // расчет шанса на победу
+  int chance = std::rand() % 100;
+  bool win = chance < 50;
+  
+  // обнуление ресурсов
+  int bet = resources;
+  resources = 0;
+
+  // расчте победы
+  if (win) {
+    if (bet < 500) {
+      int reward = 200 + std::rand() % 301;
+      resources = bet + reward;
+
+      std::cout << "\nПобеда! Ставка " << bet << ", награда: +" << reward
+                << " очков.\n";
+    } else {
+      resources = bet * 2;
+
+      std::cout << "\nПобеда! Ставка " << bet << ", счет удвоен.\n";
+    }
+  } else {
+    int damage = 30 + std::rand() % 21;
+    hp -= damage;
+
+    if (hp < 0) {
+      hp = 0;
+    }
+
+    std::cout << "\nНе повезло! Потеряно " << damage << " HP.\n";
+  }
+
+  return true;
+}
 // -------------------------------------------------------------
 
 int main() {
@@ -39,10 +77,12 @@ int main() {
       break;
     }
 
+    bool actionCompleted = true;
+    
     switch (choice) {
+    
     case 1:
-      // [РАЗРАБОТЧИК 1: ПОДКЛЮЧИТ ФУНКЦИЮ РИСКА (ISSUE #1)]
-      std::cout << "\n[!] Модуль риска еще в разработке (Issue #1).\n";
+      actionCompleted = riskOperation();
       break;
     case 2:
       // [РАЗРАБОТЧИК 2: ПОДКЛЮЧИТ МОДУЛЬ ЛАГЕРЯ (ISSUE #2)]
@@ -61,7 +101,7 @@ int main() {
     }
 
     // Каждый успешный ход дает очки выживания
-    if (hp > 0) {
+    if (hp > 0 && actionCompleted) {
       turn++;
       score += 10;
     }
