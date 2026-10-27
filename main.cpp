@@ -44,14 +44,77 @@ bool gambleEvent() {
 
   return true;
 }
+bool recovery() {
+  if (hp >= 100) {
+    std::cout << "\nМентальное здоровье уже полностью восстановлено.\n";
+    return false;
+  }
+
+  int choice = 0;
+
+  std::cout << "\n=== ЛАГЕРЬ ===\n";
+  std::cout << "Текущее здоровье: " << hp << "/100\n";
+  std::cout << "Ресурсы: " << resources << "\n";
+  std::cout << "1. Валерьянка - 10 ресурсов, +10 HP\n";
+  std::cout << "2. Антидепрессанты - 25 ресурсов, +30 HP\n";
+  std::cout << "0. Выйти\n";
+  std::cout << "Выберите действие > ";
+
+  if (!(std::cin >> choice)) {
+    return false;
+  }
+
+  int cost = 0;
+  int heal = 0;
+
+  switch (choice) {
+  case 1:
+    cost = 10;
+    heal = 10;
+    break;
+
+  case 2:
+    cost = 25;
+    heal = 30;
+    break;
+
+  case 0:
+    return false;
+
+  default:
+    std::cout << "\nНеизвестная команда!\n";
+    return false;
+  }
+
+  if (resources < cost) {
+    std::cout << "\nНедостаточно ресурсов для покупки.\n";
+    return false;
+  }
+
+  resources -= cost;
+  hp += heal;
+
+  if (hp > 100) {
+    hp = 100;
+  }
+
+  std::cout << "\nЛечение успешно.\n";
+  std::cout << "Восстановлено HP: " << heal << "\n";
+  std::cout << "Текущее здоровье: " << hp << "/100\n";
+  std::cout << "Осталось ресурсов: " << resources << "\n";
+
+  return true;
+}
 
 int main() {
   std::srand(std::time(nullptr));
   int choice = 0;
   bool surrendered = false;
+  bool actionCompleted = false;
   std::cout << ">>> ЗАПУСК СИМУЛЯЦИИ: БИТВА ЗА РЕКОРД <<<\n";
 
   while (hp > 0) {
+    actionCompleted = false;
     printHUD();
     std::cout << "1. Рискованная операция (Высокая награда / Высокий "
                  "риск)\n";
