@@ -17,7 +17,35 @@ void printHUD() {
 }
 
 // -------------------------------------------------------------
-// [МЕСТО ДЛЯ ФУНКЦИЙ РАЗРАБОТЧИКОВ ИЗ PULL REQUEST'ОВ]
+
+bool gambleEvent() {
+  int bet = resources * 20 / 100;
+
+  if (bet <= 0) {
+    std::cout << "\nНедостаточно ресурсов для крутки.\n";
+    return false;
+  }
+
+  resources -= bet;
+
+  bool win = std::rand() % 100 < 50;
+
+  if (win) {
+    int payout = bet * 2;
+    resources += payout;
+
+    std::cout << "\nПобеда в азартной крутке!\n";
+    std::cout << "Ставка: " << bet << " ресурсов\n";
+    std::cout << "Выигрыш: " << payout << " ресурсов\n";
+  } else {
+    std::cout << "\nПроигрыш в азартной крутке.\n";
+    std::cout << "Потеряно ресурсов: " << bet << "\n";
+  }
+
+  std::cout << "Текущее количество ресурсов: " << resources << "\n";
+
+  return true;
+}
 // -------------------------------------------------------------
 
 int main() {
@@ -39,7 +67,10 @@ int main() {
       break;
     }
 
+    bool surrendered = false;
+
     switch (choice) {
+      
     case 1:
       // [РАЗРАБОТЧИК 1: ПОДКЛЮЧИТ ФУНКЦИЮ РИСКА (ISSUE #1)]
       std::cout << "\n[!] Модуль риска еще в разработке (Issue #1).\n";
@@ -49,10 +80,12 @@ int main() {
       std::cout << "\n[!] Модуль лагеря еще в разработке (Issue #2).\n";
       break;
     case 3:
-      // [РАЗРАБОТЧИК 3: ПОДКЛЮЧИТ РУЛЕТКУ/БОССА (ISSUE #3)]
-      std::cout << "\n[!] Модуль событий еще в разработке (Issue #3).\n";
+      
+      actionCompleted = gambleEvent();
+     
       break;
     case 0:
+      surrendered = true;
       hp = 0;
       break;
     default:
@@ -66,6 +99,10 @@ int main() {
       score += 10;
     }
   }
+  
+  if (!surrendered && hp <= 0) {
+  std::cout << "\nВы словили психоз\n";
+}
 
   std::cout << "\nИГРА ОКОНЧЕНА. Ваш итоговый рекорд: " << score << " очков!\n";
   return 0;
